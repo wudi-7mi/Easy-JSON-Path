@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { StatusIndicator } from './components/StatusIndicator';
 import { JsonRenderer } from './components/JsonRenderer';
@@ -23,6 +23,21 @@ function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const validation = useJsonValidation(jsonText);
+
+  // 生成默认的JavaScript代码
+  const defaultCode = 'j';
+
+  // 初始化默认代码
+  useEffect(() => {
+    setGeneratedCode(defaultCode);
+  }, []);
+
+  // 当语言改变时，如果没有选中的路径，显示默认代码
+  useEffect(() => {
+    if (!selectedPath) {
+      setGeneratedCode(defaultCode);
+    }
+  }, [selectedLanguage, selectedPath]);
 
   const handleAnalyze = () => {
     setIsAnalyzing(prev => !prev);
@@ -145,6 +160,14 @@ function App() {
             Generated Access Code
           </h2>
 
+          {/* Language Selector */}
+          <div className="mb-3">
+            <LanguageSelector
+              selectedLanguage={selectedLanguage}
+              onLanguageChange={handleLanguageChange}
+            />
+          </div>
+
           {selectedPath ? (
             <>
               {/* Selected Path Info */}
@@ -157,28 +180,24 @@ function App() {
                   Type: {selectedPath.type}
                 </span>
               </div>
-
-              {/* Language Selector */}
-              <div className="mb-3">
-                <LanguageSelector
-                  selectedLanguage={selectedLanguage}
-                  onLanguageChange={handleLanguageChange}
-                />
-              </div>
-
-              {/* Code Viewer */}
-              <div className="flex-1 min-h-0">
-                <CodeViewer
-                  code={generatedCode}
-                  language={selectedLanguage}
-                />
-              </div>
             </>
           ) : (
-            <div className="text-gray-500 text-sm italic">
-              Please select a path from the JSON to generate code.
+            <div className="mb-3 p-2 bg-gray-50 rounded-lg">
+              <span className="text-sm text-gray-600">Selected Path: </span>
+              <span className="text-gray-400 italic"></span>
+              <span className="ml-3 text-sm text-gray-500">
+                Type: <span className="text-gray-400 italic"></span>
+              </span>
             </div>
           )}
+
+          {/* Code Viewer */}
+          <div className="flex-1 min-h-0">
+            <CodeViewer
+              code={generatedCode}
+              language={selectedLanguage}
+            />
+          </div>
         </div>
       </div>
     </div>

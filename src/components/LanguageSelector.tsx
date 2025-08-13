@@ -12,22 +12,21 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   onLanguageChange
 }) => {
   return (
-    <div className="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-lg">
+    <div className="flex gap-1">
       {SUPPORTED_LANGUAGES.map((lang: LanguageConfig) => (
         <button
           key={lang.id}
           onClick={() => onLanguageChange(lang.id)}
           className={`
-            flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium 
-            transition-all duration-200 border
+            px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200
             ${selectedLanguage === lang.id
-              ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
+          title={lang.name}
         >
-          <span className="text-base">{lang.icon}</span>
-          <span>{lang.name}</span>
+          {lang.name}
         </button>
       ))}
     </div>

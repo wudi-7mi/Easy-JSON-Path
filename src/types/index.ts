@@ -7,7 +7,6 @@ export interface JsonPath {
 export interface LanguageConfig {
   id: string;
   name: string;
-  icon: string;
   supportsNativeJson: boolean;
 }
 
