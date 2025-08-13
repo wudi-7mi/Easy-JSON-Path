@@ -111,7 +111,7 @@ function App() {
       {/* Header */}
       <div className="text-center py-4 flex-shrink-0">
         <h1 className="text-3xl font-bold text-gray-900 mb-1">
-          JSON Path Analyzer
+          JSON Path Explorer
         </h1>
         <p className="text-gray-600 text-sm">
           Analyze JSON structure and generate access code in multiple languages
