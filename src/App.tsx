@@ -111,10 +111,10 @@ function App() {
       {/* Header */}
       <div className="text-center py-4 flex-shrink-0">
         <h1 className="text-3xl font-bold text-gray-900 mb-1">
-          JSON Path Explorer
+          Easy Json Path
         </h1>
         <p className="text-gray-600 text-sm">
-          Analyze JSON structure and generate access code in multiple languages
+          Analyze JSON structure and generate access code to any node by one-click. 
         </p>
       </div>
       
