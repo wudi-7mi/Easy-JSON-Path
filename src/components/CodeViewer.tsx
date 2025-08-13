@@ -47,8 +47,8 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
   }
 
   return (
-    <div className="relative bg-gray-900 rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
+    <div className="relative bg-gray-900 rounded-lg overflow-hidden flex flex-col h-full">
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700 flex-shrink-0">
         <span className="text-gray-300 text-sm font-medium">
           {language.charAt(0).toUpperCase() + language.slice(1)} Code
         </span>
@@ -70,21 +70,23 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
           )}
         </button>
       </div>
-      <Editor
-        height="200px"
-        language={getMonacoLanguage(language)}
-        value={code}
-        theme="vs-dark"
-        options={{
-          readOnly: true,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-          wordWrap: 'on',
-          lineNumbers: 'on',
-          glyphMargin: false,
-          folding: false,
-        }}
-      />
+      <div className="flex-1 min-h-0">
+        <Editor
+          height="100%"
+          language={getMonacoLanguage(language)}
+          value={code}
+          theme="vs-dark"
+          options={{
+            readOnly: true,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            wordWrap: 'on',
+            lineNumbers: 'on',
+            glyphMargin: false,
+            folding: false,
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -80,7 +80,7 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
       const pathEnd = path.join('.') + '_end';
 
       return (
-        <div className={isRoot ? '' : 'ml-4'}>
+        <div className={isRoot ? '' : 'ml-2'}>
           <span
             className={`${baseClasses} text-gray-600 font-bold ${isHovered ? 'bg-blue-50' : ''} ${isSelected ? 'bg-blue-100 ring-blue-300' : ''}`}
             style={isRoot ? { paddingLeft: 2 } : undefined}
@@ -89,9 +89,13 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
             onMouseLeave={() => setHoveredPath('')}
           >[</span>
 
-          <div className="ml-4">
+          <div className="ml-2 relative">
+            {/* 左边竖线 */}
+            <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-300"></div>
             {value.map((item, index) => (
-              <div key={index} className="my-1">
+              <div key={index} className="my-1 relative pl-3">
+                {/* 每个项目的连接线 */}
+                <div className="absolute left-0 top-2 w-2 h-px bg-gray-300"></div>
                 {renderValue(item, [...path, index.toString()], depth + 1)}
               </div>
             ))}
@@ -115,7 +119,7 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
       const pathEnd = path.join('.') + '_end';
 
       return (
-        <div className={isRoot ? '' : 'ml-4'}>
+        <div className={isRoot ? '' : 'ml-2'}>
           <span
             className={`${baseClasses} text-gray-600 font-bold ${isHovered ? 'bg-blue-50' : ''} ${isSelected ? 'bg-blue-100 ring-blue-300' : ''}`}
             style={isRoot ? { paddingLeft: 2 } : undefined}
@@ -124,7 +128,9 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
             onMouseLeave={() => setHoveredPath('')}
           >{'{'}</span>
 
-          <div className="ml-4">
+          <div className="ml-2 relative">
+            {/* 左边竖线 */}
+            <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-300"></div>
             {entries.map(([key, val]) => {
               const keyPath = [...path, key].join('.');
               const isKeyHovered = hoveredPath === keyPath;
@@ -132,7 +138,9 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
               const isComplex = typeof val === 'object' && val !== null;
 
               return (
-                <div key={key} className="my-1">
+                <div key={key} className="my-1 relative pl-3">
+                  {/* 每个项目的连接线 */}
+                  <div className="absolute left-0 top-2 w-2 h-px bg-gray-300"></div>
                   {/* key */}
                   <span
                     className={`text-blue-600 font-medium transition-all duration-200 rounded px-1 py-0.5 cursor-pointer
@@ -151,20 +159,9 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
 
                   {/* value */}
                   {isComplex ? (
-                    <div className="ml-4">{renderValue(val, [...path, key], depth + 1)}</div>
+                    <div className="ml-2">{renderValue(val, [...path, key], depth + 1)}</div>
                   ) : (
-                    <span
-                      className={`ml-1 transition-all duration-200 rounded px-1 py-0.5 cursor-pointer
-                        ${hoveredPath === keyPath ? 'bg-green-50 shadow-md transform scale-105' : ''}
-                        ${selectedPath === keyPath ? 'bg-green-100 ring-green-300' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPath(keyPath);
-                        onPathSelect({ path: [...path, key], value: val, type: typeof val as any });
-                      }}
-                      onMouseEnter={() => setHoveredPath(keyPath)}
-                      onMouseLeave={() => setHoveredPath('')}
-                    >
+                    <span className="ml-1">
                       {renderValue(val, [...path, key], depth + 1)}
                     </span>
                   )}
@@ -188,8 +185,8 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
   }, [hoveredPath, selectedPath, onPathSelect]);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 font-mono text-xs overflow-auto max-h-96">
-      <div className="whitespace-nowrap">
+    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 font-mono text-xs overflow-auto h-full">
+      <div className="whitespace-nowrap min-w-0">
         {renderValue(jsonData)}
       </div>
     </div>
