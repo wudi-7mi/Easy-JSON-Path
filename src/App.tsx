@@ -21,33 +21,60 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('python');
   const [generatedCode, setGeneratedCode] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   const validation = useJsonValidation(jsonText);
 
-  // 生成默认的JavaScript代码
-  const defaultCode = 'j';
+  // 生成默认代码的函数
+  const getDefaultCode = (language: string) => {
+    switch (language) {
+      case 'python':
+        return '# Select a JSON path to generate access code';
+      case 'javascript':
+        return '// Select a JSON path to generate access code';
+      case 'cpp':
+        return '// Select a JSON path to generate access code';
+      case 'go':
+        return '// Select a JSON path to generate access code';
+      case 'csharp':
+        return '// Select a JSON path to generate access code';
+      case 'java':
+        return '// Select a JSON path to generate access code';
+      default:
+        return '// Select a JSON path to generate access code';
+    }
+  };
 
   // 初始化默认代码
   useEffect(() => {
-    setGeneratedCode(defaultCode);
+    setGeneratedCode(getDefaultCode(selectedLanguage));
   }, []);
 
-  // 当语言改变时，如果没有选中的路径，显示默认代码
+  // 当语言改变时，如果没有选中的路径，显示对应语言的默认代码
   useEffect(() => {
-    if (!selectedPath) {
-      setGeneratedCode(defaultCode);
+    if (!selectedPath && selectedLanguage) {
+      setGeneratedCode(getDefaultCode(selectedLanguage));
     }
-  }, [selectedLanguage, selectedPath]);
+  }, [selectedLanguage, selectedPath]); // 恢复selectedPath依赖，但添加条件检查
 
   const handleAnalyze = () => {
+    if (isAnalyzing) {
+      // 当从分析模式切换到编辑模式时，重置右侧Code区域的状态
+      setSelectedPath(null);
+      setSelectedLanguage('python'); // 重置语言选择器为默认语言
+      setGeneratedCode(getDefaultCode('python')); // 使用Python的默认代码
+      setResetKey(prev => prev + 1); // 重置CodeViewer组件的状态
+    }
     setIsAnalyzing(prev => !prev);
   };
 
-  const handlePathSelect = async (path: JsonPath) => {
+  const handlePathSelect = async (path: JsonPath, language?: string) => {
     setSelectedPath(path);
 
+    const targetLanguage = language || selectedLanguage;
+    
     let code = '';
-    switch (selectedLanguage) {
+    switch (targetLanguage) {
       case 'python':
         code = generatePythonPath(path.path);
         break;
@@ -75,7 +102,7 @@ function App() {
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
     if (selectedPath) {
-      handlePathSelect(selectedPath);
+      handlePathSelect(selectedPath, language);
     }
   };
 
@@ -196,6 +223,7 @@ function App() {
             <CodeViewer
               code={generatedCode}
               language={selectedLanguage}
+              resetKey={resetKey}
             />
           </div>
         </div>

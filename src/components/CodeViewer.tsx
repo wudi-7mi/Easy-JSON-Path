@@ -1,20 +1,27 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 import { Copy, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface CodeViewerProps {
   code: string;
   language: string;
   isLoading?: boolean;
   error?: string;
+  resetKey?: number; // 用于重置组件状态
 }
 
 export const CodeViewer: React.FC<CodeViewerProps> = ({ 
   code, 
-  language
+  language,
+  resetKey
 }) => {
   const [copied, setCopied] = useState(false);
+
+  // 当resetKey改变时，重置copied状态
+  useEffect(() => {
+    setCopied(false);
+  }, [resetKey]);
 
   const handleCopy = async () => {
     try {
