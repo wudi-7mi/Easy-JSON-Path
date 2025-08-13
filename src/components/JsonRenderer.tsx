@@ -11,149 +11,175 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
   const [selectedPath, setSelectedPath] = useState<string>('');
 
   const renderValue = useCallback((
-    value: any, 
-    path: string[] = [], 
-    _: boolean = true,
+    value: any,
+    path: string[] = [],
     depth: number = 0
   ): React.ReactNode => {
     const pathKey = path.join('.');
     const isHovered = hoveredPath === pathKey;
     const isSelected = selectedPath === pathKey;
 
-    const handleClick = (e: React.MouseEvent) => {
+    const handleClick = (e: React.MouseEvent, type?: string) => {
       e.stopPropagation();
       setSelectedPath(pathKey);
       onPathSelect({
         path,
         value,
-        type: Array.isArray(value) ? 'array' : typeof value as any
+        type: type || (Array.isArray(value) ? 'array' : typeof value as any)
       });
     };
 
     const baseClasses = `
       transition-all duration-200 rounded px-1 py-0.5 cursor-pointer
-      ${isHovered ? 'bg-blue-50 shadow-md transform scale-105' : ''}
-      ${isSelected ? 'bg-blue-100 ring-2 ring-blue-300' : ''}
+      ${isHovered ? 'shadow-md transform scale-105' : ''}
+      ${isSelected ? 'ring-2 ring-offset-1' : ''}
     `;
 
-    if (value === null) {
-      return (
-        <span 
-          className={`${baseClasses} text-gray-500 italic`}
-          onClick={handleClick}
-          onMouseEnter={() => setHoveredPath(pathKey)}
-          onMouseLeave={() => setHoveredPath('')}
-        >
-          null
-        </span>
-      );
-    }
+    // 基本类型
+    if (value === null) return (
+      <span
+        className={`${baseClasses} text-gray-500 italic ${isHovered ? 'bg-green-50' : ''} ${isSelected ? 'bg-green-100 ring-green-300' : ''}`}
+        onClick={(e) => handleClick(e, 'null')}
+        onMouseEnter={() => setHoveredPath(pathKey)}
+        onMouseLeave={() => setHoveredPath('')}
+      >null</span>
+    );
 
-    if (typeof value === 'string') {
-      return (
-        <span 
-          className={`${baseClasses} text-green-700`}
-          onClick={handleClick}
-          onMouseEnter={() => setHoveredPath(pathKey)}
-          onMouseLeave={() => setHoveredPath('')}
-        >
-          "{value}"
-        </span>
-      );
-    }
+    if (typeof value === 'string') return (
+      <span
+        className={`${baseClasses} text-green-700 ${isHovered ? 'bg-green-50' : ''} ${isSelected ? 'bg-green-100 ring-green-300' : ''}`}
+        onClick={(e) => handleClick(e, 'string')}
+        onMouseEnter={() => setHoveredPath(pathKey)}
+        onMouseLeave={() => setHoveredPath('')}
+      >"{value}"</span>
+    );
 
-    if (typeof value === 'number') {
-      return (
-        <span 
-          className={`${baseClasses} text-red-600 font-mono`}
-          onClick={handleClick}
-          onMouseEnter={() => setHoveredPath(pathKey)}
-          onMouseLeave={() => setHoveredPath('')}
-        >
-          {value}
-        </span>
-      );
-    }
+    if (typeof value === 'number') return (
+      <span
+        className={`${baseClasses} text-red-600 font-mono ${isHovered ? 'bg-green-50' : ''} ${isSelected ? 'bg-green-100 ring-green-300' : ''}`}
+        onClick={(e) => handleClick(e, 'number')}
+        onMouseEnter={() => setHoveredPath(pathKey)}
+        onMouseLeave={() => setHoveredPath('')}
+      >{value}</span>
+    );
 
-    if (typeof value === 'boolean') {
-      return (
-        <span 
-          className={`${baseClasses} text-purple-600 font-mono`}
-          onClick={handleClick}
-          onMouseEnter={() => setHoveredPath(pathKey)}
-          onMouseLeave={() => setHoveredPath('')}
-        >
-          {value.toString()}
-        </span>
-      );
-    }
+    if (typeof value === 'boolean') return (
+      <span
+        className={`${baseClasses} text-purple-600 font-mono ${isHovered ? 'bg-green-50' : ''} ${isSelected ? 'bg-green-100 ring-green-300' : ''}`}
+        onClick={(e) => handleClick(e, 'boolean')}
+        onMouseEnter={() => setHoveredPath(pathKey)}
+        onMouseLeave={() => setHoveredPath('')}
+      >{value.toString()}</span>
+    );
 
+    const isRoot = path.length === 0;
+
+    // 数组
     if (Array.isArray(value)) {
+      const pathStart = path.join('.') + '_start';
+      const pathEnd = path.join('.') + '_end';
+
       return (
-        <div className="inline-block">
-          <span 
-            className={`${baseClasses} text-gray-600 font-bold inline-block`}
-            onClick={handleClick}
-            onMouseEnter={() => setHoveredPath(pathKey)}
+        <div className={isRoot ? '' : 'ml-4'}>
+          <span
+            className={`${baseClasses} text-gray-600 font-bold ${isHovered ? 'bg-blue-50' : ''} ${isSelected ? 'bg-blue-100 ring-blue-300' : ''}`}
+            style={isRoot ? { paddingLeft: 2 } : undefined}
+            onClick={(e) => { e.stopPropagation(); setSelectedPath(pathStart); onPathSelect({ path, value, type: 'array' }); }}
+            onMouseEnter={() => setHoveredPath(pathStart)}
             onMouseLeave={() => setHoveredPath('')}
-          >
-            [
-          </span>
-          <div className="ml-4 border-l-2 border-gray-200 pl-4">
+          >[</span>
+
+          <div className="ml-4">
             {value.map((item, index) => (
               <div key={index} className="my-1">
-                <span className="text-gray-400 text-sm mr-2">{index}:</span>
-                {renderValue(item, [...path, index.toString()], index === value.length - 1, depth + 1)}
-                {index < value.length - 1 && <span className="text-gray-600">,</span>}
+                {renderValue(item, [...path, index.toString()], depth + 1)}
               </div>
             ))}
           </div>
-          <span className="text-gray-600 font-bold">]</span>
+
+          <span
+            className={`${baseClasses} text-gray-600 font-bold ${isHovered ? 'bg-blue-50' : ''} ${isSelected ? 'bg-blue-100 ring-blue-300' : ''}`}
+            style={isRoot ? { paddingLeft: 2 } : undefined}
+            onClick={(e) => { e.stopPropagation(); setSelectedPath(pathEnd); onPathSelect({ path, value, type: 'array' }); }}
+            onMouseEnter={() => setHoveredPath(pathEnd)}
+            onMouseLeave={() => setHoveredPath('')}
+          >]</span>
         </div>
       );
     }
 
-    if (typeof value === 'object') {
+    // 对象
+    if (typeof value === 'object' && value !== null) {
       const entries = Object.entries(value);
+      const pathStart = path.join('.') + '_start';
+      const pathEnd = path.join('.') + '_end';
+
       return (
-        <div className="inline-block">
-          <span 
-            className={`${baseClasses} text-gray-600 font-bold inline-block`}
-            onClick={handleClick}
-            onMouseEnter={() => setHoveredPath(pathKey)}
+        <div className={isRoot ? '' : 'ml-4'}>
+          <span
+            className={`${baseClasses} text-gray-600 font-bold ${isHovered ? 'bg-blue-50' : ''} ${isSelected ? 'bg-blue-100 ring-blue-300' : ''}`}
+            style={isRoot ? { paddingLeft: 2 } : undefined}
+            onClick={(e) => { e.stopPropagation(); setSelectedPath(pathStart); onPathSelect({ path, value, type: 'object' }); }}
+            onMouseEnter={() => setHoveredPath(pathStart)}
             onMouseLeave={() => setHoveredPath('')}
-          >
-            {'{'}
-          </span>
-          <div className="ml-4 border-l-2 border-gray-200 pl-4">
-            {entries.map(([key, val], index) => (
-              <div key={key} className="my-1 flex flex-wrap items-start">
-                <span 
-                  className={`text-blue-600 font-medium mr-2 transition-all duration-200 rounded px-1 py-0.5 cursor-pointer
-                    ${hoveredPath === [...path, key].join('.') ? 'bg-blue-50 shadow-md transform scale-105' : ''}
-                    ${selectedPath === [...path, key].join('.') ? 'bg-blue-100 ring-2 ring-blue-300' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const keyPath = [...path, key];
-                    const keyPathKey = keyPath.join('.');
-                    setSelectedPath(keyPathKey);
-                    onPathSelect({
-                      path: keyPath,
-                      value: val,
-                      type: Array.isArray(val) ? 'array' : typeof val as any
-                    });
-                  }}
-                  onMouseEnter={() => setHoveredPath([...path, key].join('.'))}
-                  onMouseLeave={() => setHoveredPath('')}
-                >
-                  "{key}":
-                </span>
-                {renderValue(val, [...path, key], index === entries.length - 1, depth + 1)}
-                {index < entries.length - 1 && <span className="text-gray-600">,</span>}
-              </div>
-            ))}
+          >{'{'}</span>
+
+          <div className="ml-4">
+            {entries.map(([key, val]) => {
+              const keyPath = [...path, key].join('.');
+              const isKeyHovered = hoveredPath === keyPath;
+              const isKeySelected = selectedPath === keyPath;
+              const isComplex = typeof val === 'object' && val !== null;
+
+              return (
+                <div key={key} className="my-1">
+                  {/* key */}
+                  <span
+                    className={`text-blue-600 font-medium transition-all duration-200 rounded px-1 py-0.5 cursor-pointer
+                      ${isKeyHovered ? 'bg-blue-50 shadow-md transform scale-105' : ''}
+                      ${isKeySelected ? 'bg-blue-100 ring-2 ring-blue-300' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPath(keyPath);
+                      onPathSelect({ path: [...path, key], value: val, type: Array.isArray(val) ? 'array' : typeof val as any });
+                    }}
+                    onMouseEnter={() => setHoveredPath(keyPath)}
+                    onMouseLeave={() => setHoveredPath('')}
+                  >
+                    "{key}":
+                  </span>
+
+                  {/* value */}
+                  {isComplex ? (
+                    <div className="ml-4">{renderValue(val, [...path, key], depth + 1)}</div>
+                  ) : (
+                    <span
+                      className={`ml-1 transition-all duration-200 rounded px-1 py-0.5 cursor-pointer
+                        ${hoveredPath === keyPath ? 'bg-green-50 shadow-md transform scale-105' : ''}
+                        ${selectedPath === keyPath ? 'bg-green-100 ring-green-300' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPath(keyPath);
+                        onPathSelect({ path: [...path, key], value: val, type: typeof val as any });
+                      }}
+                      onMouseEnter={() => setHoveredPath(keyPath)}
+                      onMouseLeave={() => setHoveredPath('')}
+                    >
+                      {renderValue(val, [...path, key], depth + 1)}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
-          <span className="text-gray-600 font-bold">{'}'}</span>
+
+          <span
+            className={`${baseClasses} text-gray-600 font-bold ${isHovered ? 'bg-blue-50' : ''} ${isSelected ? 'bg-blue-100 ring-blue-300' : ''}`}
+            style={isRoot ? { paddingLeft: 2 } : undefined}
+            onClick={(e) => { e.stopPropagation(); setSelectedPath(pathEnd); onPathSelect({ path, value, type: 'object' }); }}
+            onMouseEnter={() => setHoveredPath(pathEnd)}
+            onMouseLeave={() => setHoveredPath('')}
+          >{'}'}</span>
         </div>
       );
     }
@@ -162,8 +188,8 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
   }, [hoveredPath, selectedPath, onPathSelect]);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 font-mono text-sm overflow-auto max-h-96">
-      <div className="whitespace-pre-wrap break-words">
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 font-mono text-xs overflow-auto max-h-96">
+      <div className="whitespace-nowrap">
         {renderValue(jsonData)}
       </div>
     </div>

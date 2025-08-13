@@ -5,7 +5,14 @@ import { JsonRenderer } from './components/JsonRenderer';
 import { CodeViewer } from './components/CodeViewer';
 import { LanguageSelector } from './components/LanguageSelector';
 import { useJsonValidation } from './hooks/useJsonValidation';
-import { generatePythonPath, generateJavaScriptPath, generateCppPath, generateGoPath, generateCSharpPath, generateJavaPath } from './utils/jsonPathGenerator';
+import {
+  generatePythonPath,
+  generateJavaScriptPath,
+  generateCppPath,
+  generateGoPath,
+  generateCSharpPath,
+  generateJavaPath
+} from './utils/jsonPathGenerator';
 import type { JsonPath } from './types';
 
 function App() {
@@ -52,46 +59,54 @@ function App() {
 
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
-    // 如果已经选择了路径，重新生成代码
     if (selectedPath) {
       handlePathSelect(selectedPath);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              JSON Path Analyzer
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Analyze JSON structure and generate access code in multiple languages
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          JSON Path Analyzer
+        </h1>
+        <p className="text-gray-600 text-lg">
+          Analyze JSON structure and generate access code in multiple languages
+        </p>
+      </div>
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
+        {/* 左侧 JSON 编辑 / 分析区 */}
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            JSON Input
+          </h2>
+
+          {/* 状态指示器 + 按钮 */}
+          <div className="mb-4 flex items-center space-x-4">
+            <StatusIndicator
+              isValid={validation.isValid}
+              error={validation.error}
+            />
+            {((!isAnalyzing && validation.isValid) || isAnalyzing) && (
+              <button
+                onClick={handleAnalyze}
+                className="px-4 py-2 text-sm rounded-md font-medium text-white bg-green-600 hover:bg-green-700 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                {isAnalyzing ? 'Edit JSON' : 'Analyze JSON'}
+              </button>
+            )}
           </div>
 
-          {/* JSON Editor + Renderer Combined Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              {isAnalyzing ? 'Interactive JSON View' : 'JSON Input'}
-            </h2>
-            {!isAnalyzing && (
-              <div className="mb-4 flex justify-center">
-                <StatusIndicator
-                  isValid={validation.isValid}
-                  error={validation.error}
-                />
-              </div>
-            )}
-
+          {/* 编辑器 / 渲染器 */}
+          <div className="w-[600px] max-w-full">
             {isAnalyzing ? (
               <>
                 <p className="text-gray-600 mb-4 text-sm">
                   Click on any key or value to generate access code
                 </p>
                 {validation.isValid && validation.parsedJson ? (
+
                   <JsonRenderer
                     jsonData={validation.parsedJson}
                     onPathSelect={handlePathSelect}
@@ -101,51 +116,32 @@ function App() {
                 )}
               </>
             ) : (
-              <div className="flex items-start space-x-4">
-                <div className="flex-1">
-                  <Editor
-                    height="300px"
-                    defaultLanguage="json"
-                    value={jsonText}
-                    onChange={(value) => setJsonText(value || '')}
-                    theme="light"
-                    options={{
-                      minimap: { enabled: false },
-                      scrollBeyondLastLine: false,
-                      wordWrap: 'on',
-                      formatOnPaste: true,
-                      formatOnType: true,
-                    }}
-                  />
-                </div>
-              </div>
+              <Editor
+                height="300px"
+                defaultLanguage="json"
+                value={jsonText}
+                onChange={(value) => setJsonText(value || '')}
+                theme="light"
+                options={{
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  wordWrap: 'on',
+                  formatOnPaste: true,
+                  formatOnType: true,
+                }}
+              />
             )}
-
-            {/* Analyze/Edit Button */}
-            <div className="mt-4 flex items-center justify-center space-x-4">
-              <button
-                onClick={handleAnalyze}
-                disabled={!isAnalyzing && !validation.isValid}
-                className={`
-                  px-6 py-3 rounded-lg font-medium text-white transition-all duration-200
-                  ${(!isAnalyzing && validation.isValid) || isAnalyzing
-                    ? 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5'
-                    : 'bg-gray-400 cursor-not-allowed'
-                  }
-                `}
-              >
-                {isAnalyzing ? 'Edit JSON' : 'Analyze JSON'}
-              </button>
-            </div>
           </div>
+        </div>
 
-          {/* Code Generation Section */}
-          {isAnalyzing && selectedPath && (
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Generated Access Code
-              </h2>
+        {/* 右侧 Code 区域 */}
+        <div className="flex-1 bg-white rounded-xl shadow-lg p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Generated Access Code
+          </h2>
 
+          {selectedPath ? (
+            <>
               {/* Selected Path Info */}
               <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                 <span className="text-sm text-gray-600">Selected Path: </span>
@@ -170,6 +166,10 @@ function App() {
                 code={generatedCode}
                 language={selectedLanguage}
               />
+            </>
+          ) : (
+            <div className="text-gray-500 text-sm italic">
+              Please select a path from the JSON to generate code.
             </div>
           )}
         </div>
