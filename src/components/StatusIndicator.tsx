@@ -40,16 +40,16 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   const status = getStatusContent();
 
   return (
-    <div className={`flex items-start gap-2 px-3 py-1 rounded-md ${status.bgColor} transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-top-2`}>
-      <div className={`flex items-center justify-center ${status.iconColor} flex-shrink-0 w-5 h-5`}>
+    <div className={`flex items-start gap-1 lg:gap-2 px-2 lg:px-3 py-1 rounded-md ${status.bgColor} transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-top-2`}>
+      <div className={`flex items-center justify-center ${status.iconColor} flex-shrink-0 w-4 h-4 lg:w-5 lg:h-5`}>
         <div className="animate-in zoom-in duration-200">
           {status.icon}
         </div>
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="font-medium whitespace-nowrap">{status.label}</span>
+        <span className="font-medium whitespace-nowrap text-xs lg:text-sm">{status.label}</span>
         {error && (
-          <span className="text-sm text-red-500 break-words animate-in fade-in slide-in-from-left-2 duration-300 delay-100">
+          <span className="text-xs lg:text-sm text-red-500 break-words animate-in fade-in slide-in-from-left-2 duration-300 delay-100">
             {error}
           </span>
         )}

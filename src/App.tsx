@@ -107,27 +107,27 @@ function App() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+    <div className="min-h-screen lg:h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
       {/* Header */}
-      <div className="text-center py-4 flex-shrink-0">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">
+      <div className="text-center py-4 flex-shrink-0 px-4">
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
           Easy Json Path
         </h1>
-        <p className="text-gray-600 text-sm">
+        <p className="text-gray-600 text-xs lg:text-sm">
           Analyze JSON structure and generate access code to any node by one-click. 
         </p>
       </div>
       
       {/* Main Content */}
-      <div className="flex-1 flex gap-4 px-4 pb-4 min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 px-2 lg:px-4 pb-4 lg:min-h-0">
         {/* 左侧 JSON 编辑 / 分析区 */}
-        <div className="w-1/2 bg-white rounded-xl shadow-lg p-4 flex flex-col min-w-0 overflow-hidden">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">
+        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow-lg p-3 lg:p-4 flex flex-col min-w-0 overflow-hidden lg:h-full">
+          <h2 className="text-base lg:text-lg font-semibold text-gray-800 mb-2 lg:mb-3">
             JSON Input
           </h2>
 
           {/* 状态指示器 + 按钮 */}
-          <div className="mb-3 flex items-center space-x-3">
+          <div className="mb-2 lg:mb-3 flex items-center space-x-2 lg:space-x-3">
             <StatusIndicator
               isValid={validation.isValid}
               error={validation.error}
@@ -135,7 +135,7 @@ function App() {
             {((!isAnalyzing && validation.isValid) || isAnalyzing) && (
               <button
                 onClick={handleAnalyze}
-                className="px-3 py-1 text-sm rounded-md font-medium text-white bg-green-600 hover:bg-green-700 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+                className="px-2 lg:px-3 py-1 text-xs lg:text-sm rounded-md font-medium text-white bg-green-600 hover:bg-green-700 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 {isAnalyzing ? 'Edit JSON' : 'Analyze JSON'}
               </button>
@@ -143,25 +143,25 @@ function App() {
           </div>
 
           {/* 编辑器 / 渲染器 */}
-          <div className="flex-1 min-h-0 flex flex-col">
+          <div className="flex-1 min-h-0 flex flex-col min-h-64 lg:min-h-0">
             {isAnalyzing ? (
               <>
-                <p className="text-gray-600 mb-3 text-sm flex-shrink-0">
+                <p className="text-gray-600 mb-2 lg:mb-3 text-xs lg:text-sm flex-shrink-0">
                   Click on any key or value to generate access code
                 </p>
                 {validation.isValid && validation.parsedJson ? (
-                  <div className="flex-1 overflow-auto">
+                  <div className="flex-1 min-h-0 overflow-auto">
                     <JsonRenderer
                       jsonData={validation.parsedJson}
                       onPathSelect={handlePathSelect}
                     />
                   </div>
                 ) : (
-                  <div className="text-sm text-red-600 flex-shrink-0">Invalid JSON, please edit.</div>
+                  <div className="text-xs lg:text-sm text-red-600 flex-shrink-0">Invalid JSON, please edit.</div>
                 )}
               </>
             ) : (
-              <div className="flex-1">
+              <div className="flex-1 min-h-0">
                 <Editor
                   height="100%"
                   defaultLanguage="json"
@@ -174,6 +174,7 @@ function App() {
                     wordWrap: 'on',
                     formatOnPaste: true,
                     formatOnType: true,
+                    fontSize: 12,
                   }}
                 />
               </div>
@@ -182,13 +183,13 @@ function App() {
         </div>
 
         {/* 右侧 Code 区域 */}
-        <div className="w-1/2 bg-white rounded-xl shadow-lg p-4 flex flex-col min-w-0 overflow-hidden">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">
+        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow-lg p-3 lg:p-4 flex flex-col min-w-0 overflow-hidden lg:h-full">
+          <h2 className="text-base lg:text-lg font-semibold text-gray-800 mb-2 lg:mb-3">
             Generated Access Code
           </h2>
 
           {/* Language Selector */}
-          <div className="mb-3">
+          <div className="mb-2 lg:mb-3">
             <LanguageSelector
               selectedLanguage={selectedLanguage}
               onLanguageChange={handleLanguageChange}
@@ -198,28 +199,28 @@ function App() {
           {selectedPath ? (
             <>
               {/* Selected Path Info */}
-              <div className="mb-3 p-2 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">Selected Path: </span>
-                <code className="font-mono text-blue-600 bg-white px-2 py-1 rounded">
+              <div className="mb-2 lg:mb-3 p-2 bg-gray-50 rounded-lg">
+                <span className="text-xs lg:text-sm text-gray-600">Selected Path: </span>
+                <code className="font-mono text-blue-600 bg-white px-1 lg:px-2 py-1 rounded text-xs lg:text-sm">
                   {selectedPath.path.length === 0 ? 'root' : selectedPath.path.join(' → ')}
                 </code>
-                <span className="ml-3 text-sm text-gray-500">
+                <span className="ml-2 lg:ml-3 text-xs lg:text-sm text-gray-500">
                   Type: {selectedPath.type}
                 </span>
               </div>
             </>
           ) : (
-            <div className="mb-3 p-2 bg-gray-50 rounded-lg">
-              <span className="text-sm text-gray-600">Selected Path: </span>
+            <div className="mb-2 lg:mb-3 p-2 bg-gray-50 rounded-lg">
+              <span className="text-xs lg:text-sm text-gray-600">Selected Path: </span>
               <span className="text-gray-400 italic"></span>
-              <span className="ml-3 text-sm text-gray-500">
+              <span className="ml-2 lg:ml-3 text-xs lg:text-sm text-gray-500">
                 Type: <span className="text-gray-400 italic"></span>
               </span>
             </div>
           )}
 
           {/* Code Viewer */}
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 min-h-64 lg:min-h-0">
             <CodeViewer
               code={generatedCode}
               language={selectedLanguage}

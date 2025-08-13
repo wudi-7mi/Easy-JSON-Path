@@ -47,16 +47,16 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
 
   if (!code) {
     return (
-      <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-        <p className="text-gray-500">Select a JSON path to generate access code</p>
+      <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4 lg:p-8 text-center">
+        <p className="text-gray-500 text-xs lg:text-sm">Select a JSON path to generate access code</p>
       </div>
     );
   }
 
   return (
     <div className="relative bg-white border border-gray-200 rounded-lg overflow-hidden flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-        <span className="text-gray-700 text-sm font-medium">
+      <div className="flex items-center justify-between px-2 lg:px-4 py-1 lg:py-2 bg-gray-50 border-b border-gray-200 flex-shrink-0">
+        <span className="text-gray-700 text-xs lg:text-sm font-medium">
           {language.charAt(0).toUpperCase() + language.slice(1)} Code
         </span>
         <button
@@ -66,13 +66,13 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4" />
-              <span className="text-sm">Copied!</span>
+              <Check className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="text-xs lg:text-sm">Copied!</span>
             </>
           ) : (
             <>
-              <Copy className="w-4 h-4" />
-              <span className="text-sm">Copy</span>
+              <Copy className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="text-xs lg:text-sm">Copy</span>
             </>
           )}
         </button>
@@ -91,6 +91,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({
             lineNumbers: 'on',
             glyphMargin: false,
             folding: false,
+            fontSize: 12,
           }}
         />
       </div>

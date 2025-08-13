@@ -12,13 +12,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   onLanguageChange
 }) => {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1 flex-wrap">
       {SUPPORTED_LANGUAGES.map((lang: LanguageConfig) => (
         <button
           key={lang.id}
           onClick={() => onLanguageChange(lang.id)}
           className={`
-            px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200
+            px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm font-medium rounded-md transition-all duration-200
             ${selectedLanguage === lang.id
               ? 'bg-blue-600 text-white shadow-sm'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

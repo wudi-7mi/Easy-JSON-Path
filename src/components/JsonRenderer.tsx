@@ -185,7 +185,7 @@ export const JsonRenderer: React.FC<JsonRendererProps> = ({ jsonData, onPathSele
   }, [hoveredPath, selectedPath, onPathSelect]);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 font-mono text-xs overflow-auto h-full">
+    <div className="bg-white p-2 lg:p-4 rounded-lg shadow-sm border border-gray-200 font-mono text-xs overflow-auto h-full">
       <div className="whitespace-nowrap min-w-0">
         {renderValue(jsonData)}
       </div>
